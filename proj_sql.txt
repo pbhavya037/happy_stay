@@ -1,0 +1,95 @@
+
+PROJECT SQL
+
+
+CREATE DATABASE hbwebsite;
+
+CREATE TABLE `hbwebsite`.`hotel_owner` ( `owner_id` INT NOT NULL AUTO_INCREMENT , `o_username` VARCHAR(30) NOT NULL , `o_pass` VARCHAR(30) NOT NULL , `o_email` VARCHAR(30) NOT NULL , PRIMARY KEY (`owner_id`)) ENGINE = InnoDB;
+
+
+INSERT INTO `hotel_owner` (`owner_id`, `o_username`, `o_pass`, `o_email`) VALUES (NULL, 'abstract-programmer', 'Qwerty@123', 'abst.prog@gmail.com')
+
+
+CREATE TABLE `hbwebsite`.`contact` ( `sr_no` INT NOT NULL AUTO_INCREMENT , `address` VARCHAR(100) NOT NULL , `map` VARCHAR(300) NOT NULL , `phn1` VARCHAR(30) NOT NULL , `phn1` VARCHAR(30) NOT NULL , `email` VARCHAR(30) NOT NULL , PRIMARY KEY (`sr_no`)) ENGINE = InnoDB;
+
+
+CREATE TABLE `hbwebsite`.`receptionist` ( `staff_id` INT NOT NULL AUTO_INCREMENT , `staff_name` VARCHAR(30) NOT NULL , `staff_add` VARCHAR(100) NOT NULL , `staff_contact` VARCHAR(30) NOT NULL , `shift` BOOLEAN NOT NULL , PRIMARY KEY (`staff_id`)) ENGINE = InnoDB;
+
+
+CREATE TABLE `hbwebsite`.`cleaning_staff` ( `staff_id` INT NOT NULL AUTO_INCREMENT , `staff_name` VARCHAR(30) NOT NULL , `staff_add` VARCHAR(100) NOT NULL , `staff_contact` VARCHAR(30) NOT NULL , `shift` BOOLEAN NOT NULL , PRIMARY KEY (`staff_id`)) ENGINE = InnoDB;
+
+CREATE TABLE `hbwebsite`.`room_type` ( `room_id` INT NOT NULL AUTO_INCREMENT , `price` INT NOT NULL , `capacity` INT NOT NULL , `description` VARCHAR(500) NOT NULL , PRIMARY KEY (`room_id`)) ENGINE = InnoDB;
+
+CREATE TABLE `hbwebsite`.`room_image` ( `img_id` INT NOT NULL AUTO_INCREMENT , `image` VARCHAR(300) NOT NULL , PRIMARY KEY (`img_id`)) ENGINE = InnoDB;
+
+CREATE TABLE `hbwebsite`.`features` ( `fr_id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(30) NOT NULL , `description` VARCHAR(500) NOT NULL , PRIMARY KEY (`fr_id`)) ENGINE = InnoDB;
+
+CREATE TABLE room(
+	room_no INT PRIMARY KEY NOT NULL,
+    availibility INT NOT NULL,
+    room_id INT NOT NULL,
+    FOREIGN KEY(room_id) REFERENCES room_type(room_id) ON DELETE CASCADE
+);
+
+CREATE TABLE booking_req(
+req_id INT PRIMARY KEY NOT NULL,
+    check_in DATETIME NOT NULL,
+    check_out DATETIME NOT NULL,
+    aadhar_no VARCHAR(12) NOT NULL,
+    aadhar_img VARCHAR(300),
+    cus_id INT
+); 
+
+CREATE TABLE `hbwebsite`.`custumer` ( `cus_id` INT NOT NULL AUTO_INCREMENT , `name` VARCHAR(30) NOT NULL , `email` VARCHAR(30) NOT NULL , `phone` VARCHAR(20) NOT NULL , `address` VARCHAR(300) NOT NULL , `dob` DATE NOT NULL , `verified` INT NOT NULL , PRIMARY KEY (`cus_id`)) ENGINE = InnoDB;
+
+ALTER TABLE booking_req
+ADD FOREIGN KEY (cus_id) REFERENCES custumer(cus_id);
+
+CREATE TABLE  rt_image(
+	sr_no INT PRIMARY KEY AUTO_INCREMENT,
+    img_id INT,
+    room_id INT,
+    FOREIGN KEY(room_id) REFERENCES room_type(room_id) ON DELETE CASCADE,
+    FOREIGN KEY(img_id) REFERENCES room_image(img_id) ON DELETE CASCADE 
+);
+
+CREATE TABLE `hbwebsite`.`rt_feature` ( 
+ `sr_no` INT NOT NULL AUTO_INCREMENT ,
+ `fr_id` INT NOT NULL ,
+ `room_id` INT NOT NULL ,
+ PRIMARY KEY (`sr_no`))
+  ENGINE = InnoDB;
+  
+ALTER TABLE rt_feature
+ADD FOREIGN KEY (room_id) REFERENCES room_type(room_id) ON DELETE CASCADE;
+
+ALTER TABLE rt_feature
+ADD FOREIGN KEY (fr_id) REFERENCES features(fr_id) ON DELETE CASCADE;
+
+CREATE TABLE queries(
+	query_no INT AUTO_INCREMENT,
+    q_datetime DATETIME,
+    message VARCHAR(300),
+    cus_id INT,
+    FOREIGN KEY (cus_id) REFERENCES custumer(cus_id) ON DELETE CASCADE,
+    PRIMARY KEY(query_no,cus_id)
+);
+
+CREATE TABLE `hbwebsite`.`resolve` ( `sr_no` INT NOT NULL AUTO_INCREMENT , `staff_id` INT NOT NULL , `query_no` INT NOT NULL , PRIMARY KEY (`sr_no`)) ENGINE = InnoDB;
+
+ALTER TABLE resolve
+ADD FOREIGN KEY (staff_id) REFERENCES receptionist(staff_id);
+
+ALTER TABLE resolve
+ADD FOREIGN KEY (query_no) REFERENCES queries(query_no);
+
+CREATE TABLE `hbwebsite`.`cleans` ( `sr_no` INT NOT NULL AUTO_INCREMENT , `staff_id` INT NOT NULL , `room_id` INT NOT NULL , PRIMARY KEY (`sr_no`)) ENGINE = InnoDB;
+
+ALTER TABLE cleans
+ADD FOREIGN KEY (room_id) REFERENCES room_type(room_id) ON DELETE CASCADE;
+
+ALTER TABLE cleans
+ADD FOREIGN KEY (staff_id) REFERENCES cleaning_staff(staff_id);
+
+
+
